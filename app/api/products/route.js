@@ -1,12 +1,10 @@
-import { PrismaClient } from "@prisma/client";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-
-const prisma = new PrismaClient();
+import { connectDB } from "@/lib/mongodb";
+import Product from "@/models/Product";
 
 export async function GET() {
   try {
-    const products = await prisma.product.findMany();
+    await connectDB();
+    const products = await Product.find();
     return new Response(JSON.stringify(products), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -22,15 +20,7 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
+    await connectDB();
     const body = await req.json();
     const { name, description, price } = body;
 
@@ -41,12 +31,10 @@ export async function POST(req) {
       });
     }
 
-    const product = await prisma.product.create({
-      data: {
-        name,
-        description,
-        price: parseFloat(price),
-      },
+    const product = await Product.create({
+      name,
+      description,
+      price,
     });
 
     return new Response(JSON.stringify(product), {
