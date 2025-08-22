@@ -2,115 +2,114 @@
 
 import { useState } from "react";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
+import { useSession, signIn } from "next-auth/react";
 
-export default function AddProduct() {
+export default function AddProductPage() {
+  const { data: session } = useSession();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+
+  if (!session) {
+    return (
+      <div className="p-12 text-center">
+        <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+          You must be logged in to add products
+        </h1>
+        <button
+          onClick={() => signIn()}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl transition"
+        >
+          Login
+        </button>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!name || !description || !price) {
+      Swal.fire("Error", "All fields are required", "error");
+      return;
+    }
     setLoading(true);
 
     try {
       const res = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description, price: parseFloat(price) }),
+        body: JSON.stringify({ name, description, price }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        Swal.fire({
-          title: "Success!",
-          text: "Product added successfully 🎉",
-          icon: "success",
-          confirmButtonText: "OK",
-        });
+        Swal.fire("Success!", "Product added successfully", "success");
         setName("");
         setDescription("");
         setPrice("");
-        setTimeout(() => router.push("/products"), 2000);
       } else {
-        Swal.fire({
-          title: "Error",
-          text: "Something went wrong. Please try again.",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
+        Swal.fire("Error", data.error || "Failed to add product", "error");
       }
     } catch (err) {
-      Swal.fire({
-        title: "Error",
-        text: "Something went wrong. Please try again.",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
+      Swal.fire("Error", "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">
+    <div className="p-12 max-w-3xl mx-auto">
+      <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-gray-100">
         Add New Product
       </h1>
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Product Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          className="w-full p-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-        />
-        <textarea
-          placeholder="Product Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          className="w-full p-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-        />
-        <input
-          type="number"
-          placeholder="Price"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          required
-          className="w-full p-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-        />
+
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white dark:bg-gray-900 border rounded-xl shadow p-8 space-y-6"
+      >
+        <div>
+          <label className="block mb-2 font-semibold text-gray-900 dark:text-gray-100">
+            Product Name
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-2 font-semibold text-gray-900 dark:text-gray-100">
+            Description
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          ></textarea>
+        </div>
+
+        <div>
+          <label className="block mb-2 font-semibold text-gray-900 dark:text-gray-100">
+            Price
+          </label>
+          <input
+            type="number"
+            step="0.01"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+
         <button
           type="submit"
           disabled={loading}
-          className={`bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition flex items-center justify-center ${
-            loading ? "cursor-not-allowed opacity-70" : ""
-          }`}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl transition disabled:opacity-50"
         >
-          {loading && (
-            <svg
-              className="animate-spin h-5 w-5 mr-2 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-              ></path>
-            </svg>
-          )}
           {loading ? "Adding..." : "Add Product"}
         </button>
       </form>
