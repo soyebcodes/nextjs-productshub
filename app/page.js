@@ -16,10 +16,11 @@ export default function Home() {
         </div>
       </nav>
       {/* Hero section */}
-       <section className="flex flex-col items-center justify-center flex-grow bg-blue-100 p-12 text-center">
+      <section className="flex flex-col items-center justify-center flex-grow bg-blue-100 p-12 text-center">
         <h1 className="text-4xl font-bold mb-4">Welcome to My Product Store</h1>
         <p className="text-gray-700 max-w-xl mb-6">
-          Browse through our curated collection of products and find the one that fits your needs.
+          Browse through our curated collection of products and find the one
+          that fits your needs.
         </p>
         <Link
           href="/products"
@@ -29,7 +30,7 @@ export default function Home() {
         </Link>
       </section>
       {/* Products highlights */}
-        <section className="p-12 bg-white grid sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
+      <section className="p-12 bg-white grid sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
         <div className="border p-6 rounded-xl shadow-sm hover:shadow-md transition">
           <h2 className="text-xl font-semibold mb-2">Quality Guaranteed</h2>
           <p className="text-gray-600">
@@ -55,6 +56,10 @@ export default function Home() {
           </p>
         </div>
       </section>
+      {/* Footer */}
+      <footer className="p-4 bg-gray-800 text-white text-center">
+        © {new Date().getFullYear()} My Products. All rights reserved.
+      </footer>
     </div>
   );
 }
