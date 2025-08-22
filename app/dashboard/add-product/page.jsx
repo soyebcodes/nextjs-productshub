@@ -8,38 +8,48 @@ export default function AddProduct() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    const res = await fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, description, price: parseFloat(price) }),
-    });
-
-    if (res.ok) {
-      Swal.fire({
-        title: "Success!",
-        text: "Product added successfully 🎉",
-        icon: "success",
-        confirmButtonText: "OK",
+    try {
+      const res = await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, description, price: parseFloat(price) }),
       });
 
-      // Clear form
-      setName("");
-      setDescription("");
-      setPrice("");
-
-      setTimeout(() => router.push("/products"), 2000);
-    } else {
+      if (res.ok) {
+        Swal.fire({
+          title: "Success!",
+          text: "Product added successfully 🎉",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+        setName("");
+        setDescription("");
+        setPrice("");
+        setTimeout(() => router.push("/products"), 2000);
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: "Something went wrong. Please try again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (err) {
       Swal.fire({
         title: "Error",
         text: "Something went wrong. Please try again.",
         icon: "error",
         confirmButtonText: "OK",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,9 +84,34 @@ export default function AddProduct() {
         />
         <button
           type="submit"
-          className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition"
+          disabled={loading}
+          className={`bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition flex items-center justify-center ${
+            loading ? "cursor-not-allowed opacity-70" : ""
+          }`}
         >
-          Add Product
+          {loading && (
+            <svg
+              className="animate-spin h-5 w-5 mr-2 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              ></path>
+            </svg>
+          )}
+          {loading ? "Adding..." : "Add Product"}
         </button>
       </form>
     </div>
