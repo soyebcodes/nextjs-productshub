@@ -1,13 +1,24 @@
+"use client";
 import Link from "next/link";
 import products from "../../lib/data/products.json";
+import { useSession } from "next-auth/react";
 
 export default function ProductsPage() {
+  const { data: session } = useSession();
   return (
     <div className="px-6 py-12 max-w-6xl mx-auto">
       {/* Title */}
       <h1 className="text-4xl font-bold mb-10 text-center text-gray-900 dark:text-gray-100">
         Our Products
       </h1>
+      {session && (
+        <Link
+          href="/dashboard/add-product"
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition"
+        >
+          + Add Product
+        </Link>
+      )}
 
       {/* Grid */}
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
