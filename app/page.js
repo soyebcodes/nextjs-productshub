@@ -117,7 +117,7 @@ export default function Home() {
               />
             </div>
 
-            <p className="text-gray-700 dark:text-gray-300 mb-2">"{t.quote}"</p>
+            <p className="text-gray-700 dark:text-gray-300 mb-2">{t.quote}</p>
             <span className="font-semibold text-gray-900 dark:text-gray-100">{t.name}</span>
           </div>
         ))}
