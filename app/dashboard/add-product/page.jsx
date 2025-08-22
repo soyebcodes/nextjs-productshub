@@ -1,78 +1,68 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useState } from "react";
+import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
 
-export default function AddProductPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+export default function AddProduct() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
-  // redirect if not authenticated
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
-
-  if (status === "loading") {
-    return <div className="p-12 text-center">Loading...</div>;
-  }
-
-  if (!session) return null; // wait for redirect
-
-  // handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
     const res = await fetch("/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        description,
-        price: Number(price),
-      }),
+      body: JSON.stringify({ name, description, price: parseFloat(price) }),
     });
 
     if (res.ok) {
-      alert("Product added!");
-      router.push("/products");
-    } else {
-      alert("Failed to add product");
-    }
+      Swal.fire({
+        title: "Success!",
+        text: "Product added successfully 🎉",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
 
-    setIsSubmitting(false);
+      // Clear form
+      setName("");
+      setDescription("");
+      setPrice("");
+
+      setTimeout(() => router.push("/products"), 2000);
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: "Something went wrong. Please try again.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   return (
-    <div className="px-6 py-12 max-w-3xl mx-auto">
+    <div className="max-w-2xl mx-auto p-8">
       <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">
         Add New Product
       </h1>
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-md space-y-6"
-      >
+      <form className="space-y-4" onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Product Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
         <textarea
-          placeholder="Description"
+          placeholder="Product Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
         <input
           type="number"
@@ -80,15 +70,13 @@ export default function AddProductPage() {
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           required
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
-
         <button
           type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl font-medium transition disabled:opacity-50"
+          className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition"
         >
-          {isSubmitting ? "Adding..." : "Add Product"}
+          Add Product
         </button>
       </form>
     </div>
