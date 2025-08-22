@@ -28,6 +28,33 @@ export default function Home() {
           Explore Products
         </Link>
       </section>
+      {/* Products highlights */}
+        <section className="p-12 bg-white grid sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="border p-6 rounded-xl shadow-sm hover:shadow-md transition">
+          <h2 className="text-xl font-semibold mb-2">Quality Guaranteed</h2>
+          <p className="text-gray-600">
+            Our products are sourced from top suppliers and built to last.
+          </p>
+        </div>
+        <div className="border p-6 rounded-xl shadow-sm hover:shadow-md transition">
+          <h2 className="text-xl font-semibold mb-2">Affordable Prices</h2>
+          <p className="text-gray-600">
+            We make sure you get the best value for your money.
+          </p>
+        </div>
+        <div className="border p-6 rounded-xl shadow-sm hover:shadow-md transition">
+          <h2 className="text-xl font-semibold mb-2">Fast Delivery</h2>
+          <p className="text-gray-600">
+            Get your products quickly with our efficient delivery system.
+          </p>
+        </div>
+        <div className="border p-6 rounded-xl shadow-sm hover:shadow-md transition">
+          <h2 className="text-xl font-semibold mb-2">24/7 Support</h2>
+          <p className="text-gray-600">
+            Our support team is always ready to help you out.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
