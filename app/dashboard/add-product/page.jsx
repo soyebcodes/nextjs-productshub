@@ -41,7 +41,6 @@ export default function AddProductPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, description, price }),
       });
-
       const data = await res.json();
 
       if (res.ok) {
@@ -52,7 +51,7 @@ export default function AddProductPage() {
       } else {
         Swal.fire("Error", data.error || "Failed to add product", "error");
       }
-    } catch (err) {
+    } catch {
       Swal.fire("Error", "Something went wrong", "error");
     } finally {
       setLoading(false);

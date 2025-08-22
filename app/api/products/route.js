@@ -1,5 +1,7 @@
-import { connectDB } from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongoose";
 import Product from "@/models/Product";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 export async function GET() {
   try {
@@ -20,23 +22,28 @@ export async function GET() {
 
 export async function POST(req) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     await connectDB();
+
     const body = await req.json();
     const { name, description, price } = body;
 
     if (!name || !description || !price) {
-      return new Response(JSON.stringify({ error: "Missing fields" }), {
+      return new Response(JSON.stringify({ error: "All fields are required" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    const product = await Product.create({
-      name,
-      description,
-      price,
-    });
-
+    const product = await Product.create({ name, description, price });
     return new Response(JSON.stringify(product), {
       status: 201,
       headers: { "Content-Type": "application/json" },

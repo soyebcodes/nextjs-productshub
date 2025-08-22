@@ -1,23 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function ProductDetails() {
-  const { id } = useParams(); // get the product ID from URL
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        const found = data.find((p) => p.id === Number(id));
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch("/api/products");
+        if (!res.ok) throw new Error("Failed to fetch products");
+        const data = await res.json();
+        const found = data.find((p) => p.id === id);
         setProduct(found || null);
+      } catch (err) {
+        console.error(err);
+        setProduct(null);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    };
+
+    fetchProduct();
   }, [id]);
 
   if (loading) {
