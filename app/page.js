@@ -108,9 +108,11 @@ export default function Home() {
           >
             {/* Single Avatar for all */}
             <div className="h-16 w-16 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 dark:bg-gray-700">
-              <img
+              <Image
                 src="/alice.jpg"
                 alt={t.name}
+                width={28}
+                height={28}
                 className="w-full h-full object-cover"
               />
             </div>
