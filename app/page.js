@@ -1,7 +1,11 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
 
 export default function Home() {
+  const { data: session } = useSession();
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navbar */}
@@ -11,9 +15,21 @@ export default function Home() {
           <Link href="/products" className="hover:underline">
             Products
           </Link>
-          <Link href="/login" className="hover:underline">
-            Login
-          </Link>
+
+          {!session && (
+            <Link href="/login" className="hover:underline">
+              Login
+            </Link>
+          )}
+
+          {session && (
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
+            >
+              Logout
+            </button>
+          )}
         </div>
       </nav>
 
