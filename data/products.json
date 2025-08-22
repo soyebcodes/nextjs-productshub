@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "name": "Widget A",
+    "description": "Basic widget",
+    "price": 19.99
+  },
+  {
+    "id": 2,
+    "name": "Widget B",
+    "description": "Better widget",
+    "price": 29.99
+  },
+  { "id": 3, "name": "Widget C", "description": "Best widget", "price": 39.99 }
+]
